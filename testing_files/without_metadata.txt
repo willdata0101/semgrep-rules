@@ -1,0 +1,371 @@
+rules:
+# ok: duplicate-id
+- id: unchecked-subprocess-call-1
+  patterns:
+  - pattern-either:
+    - pattern: |
+        subprocess.call(...)
+    - pattern: |
+        subprocess.call(...)
+  - pattern-not-inside: |
+      $S = subprocess.call(...)
+  - pattern-not-inside: |
+      subprocess.call(...) == $X
+  message: |
+  severity: WARNING
+  fix: subprocess.check_call(...)
+# ruleid: duplicate-id
+- id: unchecked-subprocess-call
+  patterns:
+  - pattern-either:
+    - pattern: |
+        subprocess.call(...)
+    - pattern: |
+        subprocess.call(...)
+  - pattern-not-inside: |
+      $S = subprocess.call(...)
+  - pattern-not-inside: |
+      subprocess.call(...) == $X
+  message: |
+  severity: WARNING
+  fix: subprocess.check_call(...)
+# ok: duplicate-id
+- id: unchecked-subprocess-call-2
+  patterns:
+  - pattern-either:
+    - pattern: |
+        subprocess.call(...)
+    - pattern: |
+        subprocess.call(...)
+  - pattern-not-inside: |
+      $S = subprocess.call(...)
+  - pattern-not-inside: |
+      subprocess.call(...) == $X
+  message: |
+  severity: WARNING
+  fix: subprocess.check_call(...)
+# ruleid: duplicate-id
+- id: unchecked-subprocess-call
+  patterns:
+  - pattern-either:
+    - pattern: |
+        subprocess.call(...)
+    - pattern: |
+        subprocess.call(...)
+  - pattern-not-inside: |
+      $S = subprocess.call(...)
+  - pattern-not-inside: |
+      subprocess.call(...) == $X
+  message: |
+  severity: WARNING
+  fix: subprocess.check_call(...)
+# ok: duplicate-id
+- id: unchecked-subprocess-call-3
+  patterns:
+  - pattern-either:
+    - pattern: |
+        subprocess.call(...)
+    - pattern: |
+        subprocess.call(...)
+  - pattern-not-inside: |
+      $S = subprocess.call(...)
+  - pattern-not-inside: |
+      subprocess.call(...) == $X
+  message: |
+  severity: WARNING
+  fix: subprocess.check_call(...)
+rules:
+  - id: unchecked-subprocess-call
+    patterns:
+      - pattern-either:
+          # ruleid: duplicate-pattern
+          - pattern: |
+              subprocess.call(...)
+            # ruleid: duplicate-pattern
+          - pattern: |
+              subprocess.call(...)
+      - pattern-not-inside: |
+          $S = subprocess.call(...)
+      - pattern-not-inside: |
+          subprocess.call(...) == $X
+    message: >-
+      This is not checking the return value of this subprocess call; if it fails no exception will be raised. Consider subprocess.check_call() instead
+    severity: WARNING
+    fix: subprocess.check_call(...)
+rules:
+  - id: unchecked-subprocess-call
+    patterns:
+      - pattern-either:
+          - pattern: |
+              subprocess.call(...)
+          - pattern: |
+              subprocess.call(...)
+      - pattern-not-inside: |
+          $S = subprocess.call(...)
+      - pattern-not-inside: |
+          subprocess.call(...) == $X
+    # ruleid: empty-message
+    message: >-
+    severity: WARNING
+    fix: subprocess.check_call(...)
+rules:
+  - id: half-written-crypto-example
+    message: >-
+      # ruleid: message-whitespace-check
+      Semgrep found  a match
+      # ruleid: message-whitespace-check
+      I like    big space
+    languages:
+      - js
+    severity: WARNING
+    patterns:
+      - pattern: |
+          createCipheriv($ALGO, $KEY, $IV);
+rules:
+  # ruleid: missing-language-field
+  - id: unchecked-subprocess-call
+    patterns:
+      - pattern-either:
+          - pattern: |
+              subprocess.call(...)
+          - pattern: |
+              subprocess.call(...)
+      - pattern-not-inside: |
+          $S = subprocess.call(...)
+      - pattern-not-inside: |
+          subprocess.call(...) == $X
+    message: ""
+    severity: WARNING
+    fix: subprocess.check_call(...)
+    # ok: missing-language-field
+  - id: other-rule
+    languages: [generic]
+    message: ""
+    severity: INFO
+    pattern: <div>hello</div>
+    # ok: missing-language-field
+  - id: flask-likely-xss
+    mode: join
+    join:
+      rules:
+        # ok: missing-language-field
+        - id: user-input
+          pattern: |
+            $VAR = flask.request.$SOMETHING.get(...)
+          languages: [python]
+        # ok: missing-language-field
+        - id: unescaped-extensions
+          languages: [python]
+          patterns:
+          - pattern: |
+              flask.render_template("$TEMPLATE", ..., $KWARG=$VAR, ...)
+          - metavariable-regex:
+              metavariable: '$TEMPLATE'
+              regex: ".*(?<!html)$"
+        # ruleid: missing-language-field
+        - id: template-vars
+          #languages: [generic]
+          pattern: |
+            {{ $VAR }}
+      on:
+      - 'user-input.$VAR == unescaped-extensions.$VAR'
+      - 'unescaped-extensions.$KWARG == template-vars.$VAR'
+      - 'unescaped-extensions.$TEMPLATE < template-vars.path'
+    message: >-
+      Detected a XSS vulnerability: '$VAR' is rendered
+      unsafely in '$TEMPLATE'.
+    severity: ERROR
+rules:
+  # ruleid: missing-message-field
+  - id: unchecked-subprocess-call
+    patterns:
+      - pattern: |
+          subprocess.call(...)
+      - pattern-not-inside: |
+          $S = subprocess.call(...)
+      - pattern-not-inside: |
+          subprocess.call(...) == $X
+    severity: WARNING
+    fix: subprocess.check_call(...)
+  # ok: missing-message-field
+  - id: other-rule
+    pattern: <div>hello</div>
+    languages: [generic]
+    severity: INFO
+    message: ""
+  # ok: missing-message-field
+  - message: ""
+    id: other-rule-2
+    pattern: <div>hello</div>
+    languages: [generic]
+    severity: INFO
+rules:
+  - id: bad-1
+    pattern: "..."
+    # ruleid: multi-line-message
+    message: |
+      a
+      b
+    severity: WARNING
+  - id: bad-2
+    pattern: "..."
+    # ruleid: multi-line-message
+    message: "a\nb"
+    severity: WARNING
+  - id: good-1
+    pattern: "..."
+    # ok: multi-line-message
+    message: >-
+      a
+      b
+    severity: WARNING
+rules:
+  - id: half-written-crypto-example
+    message: >-
+      A lav crypto hun
+    languages:
+      - js
+    severity: WARNING
+    patterns:
+      - pattern-inside: |
+          # ruleid: missing-deconstructed-value
+          const {...,createCipheriv,...} = require('node:crypto');
+          ...
+      - pattern: |
+          createCipheriv($ALGO, $KEY, $IV);
+      - pattern-either: 
+       # ok: missing-deconstructed-value
+        - pattern-inside: |
+            const {...,createCipheriv,...} = require('node:crypto');
+            ...
+        - pattern-inside: |
+            let {...,createCipheriv,...} = require('node:crypto');
+            ...
+        - pattern-inside: |
+            var {...,createCipheriv,...} = require('node:crypto');
+            ...
+      - pattern-either: 
+        # ruleid: missing-deconstructed-value
+        - pattern-inside: |
+            const {...,createCipheriv,...} = require('node:crypto');
+            ...
+        # ruleid: missing-deconstructed-value
+        - pattern-inside: |
+            let {...,createCipheriv,...} = require('node:crypto');
+            ...
+ rules:
+  - id: javascript.phantom.security.audit.phantom-injection.phantom-injection
+    message: >-
+      If unverified user data can reach the `phantom` page methods it can result in Server-Side Request Forgery vulnerabilities
+    severity: WARNING
+    languages:
+      - javascript
+    patterns:
+      #ruleid: slow-pattern-top-ellipsis
+      - pattern: |
+          ...
+          $PHANTOM = require('phantom');
+          ...
+      - pattern-not-inside: |
+          var $INPUT = "...";
+          ...
+  - id: javascript.playwright.security.audit.playwright-evaluate-arg-injection.playwright-evaluate-arg-injection
+    message: >-
+      If unverified user data can reach the `evaluate` method it can result in Server-Side Request Forgery vulnerabilities
+    severity: WARNING
+    languages:
+      - javascript
+    patterns:
+      #ruleid: slow-pattern-top-ellipsis
+      - pattern-inside: |
+          ...
+          require('playwright');
+          ...
+      - pattern-either:
+          - pattern-inside: function $FUNC (...,$INPUT,...) {...}
+          - pattern-inside: function (...,$INPUT,...) {...}
+rules:
+  - id: unchecked-subprocess-call1
+    # ruleid: unnecessary-parent-operator
+    patterns:
+      - pattern-either:
+          - pattern: subprocess.call1(...)
+          - pattern: subprocess.call2(...)
+    message: test
+    severity: WARNING
+    fix: subprocess.check_call(...)
+  - id: unchecked-subprocess-call2
+    # ok: unnecessary-parent-operator
+    patterns:
+      - pattern-either:
+          - pattern: subprocess.call1(...)
+          - pattern: subprocess.call2(...)
+      - pattern: subprocess.call3(...)
+    message: test
+    severity: WARNING
+    fix: subprocess.check_call(...)
+  - id: unchecked-subprocess-call3
+    # ruleid: unnecessary-parent-operator
+    pattern-either:
+      - patterns:
+          - pattern: subprocess.call1(...)
+          - pattern: subprocess.call2(...)
+    message: test
+    severity: WARNING
+    fix: subprocess.check_call(...)
+  - id: unchecked-subprocess-call4
+    # ok: unnecessary-parent-operator
+    pattern-either:
+      - patterns:
+          - pattern: subprocess.call1(...)
+          - pattern: subprocess.call2(...)
+      - pattern: subprocess.call3(...)
+    message: test
+    severity: WARNING
+    fix: subprocess.check_call(...)
+  - id: unchecked-subprocess-call5
+    # ruleid: unnecessary-parent-operator
+    pattern-either:
+      - pattern: subprocess.call1(...)
+    message: test
+    severity: WARNING
+    fix: subprocess.check_call(...)
+  - id: unchecked-subprocess-call6
+    # ok: unnecessary-parent-operator
+    pattern-either:
+      - pattern: subprocess.call1(...)
+      - pattern: subprocess.call2(...)
+    message: test
+    severity: WARNING
+    fix: subprocess.check_call(...)
+  - id: unchecked-subprocess-call7
+    # ruleid: unnecessary-parent-operator
+    patterns:
+      - pattern: subprocess.call1(...)
+    message: test
+    severity: WARNING
+    fix: subprocess.check_call(...)
+  - id: unchecked-subprocess-call8
+    # ok: unnecessary-parent-operator
+    patterns:
+      - pattern: subprocess.call1(...)
+      - pattern: subprocess.call2(...)
+    message: test
+    severity: WARNING
+    fix: subprocess.check_call(...)
+rules:
+  - id: unchecked-subprocess-call
+    patterns:
+      - pattern: |
+          subprocess.call(...)
+      # ruleid: unsatisfiable-rule
+      - pattern-not: |
+          subprocess.call(...)
+      - pattern-not-inside: |
+          $S = subprocess.call(...)
+      - pattern-not-inside: |
+          subprocess.call(...) == $X
+    message: >-
+      blah
+    severity: WARNING
+    fix: subprocess.check_call(...)
